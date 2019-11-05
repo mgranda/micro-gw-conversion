@@ -1,0 +1,100 @@
+openapi: 3.0.2
+servers:
+  - url: http://127.0.0.1:9090/conversionservice/v1
+  - url: https://127.0.0.1:9090/conversionservice/v1
+info:
+  version: 1.0.0
+  title: Conversion number/dollar service.
+  description: This is a mock backend for conversion number/dollar service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: conversion
+    description: Conversion number to words.
+x-wso2-basePath: /conversionservice/v1
+x-wso2-production-endpoints:
+  urls:
+    - http://127.0.0.1:9090/conversionservice/v1
+paths:
+  "/operation/numberToDollars":
+    post:
+      tags:
+      - conversion
+      summary: Convert number to words
+      description: Service to convert numbers to words
+      operationId: numberToDollars
+      #x-wso2-disable-security: true
+      x-wso2-request-interceptor: convertionTransformJsonToXml
+      #x-wso2-request-interceptor: convertionTransformJsonToXmlv2
+      x-wso2-response-interceptor: convertionTransformXmlToJson
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      x-wso2-production-endpoints:
+        urls:
+        - http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL
+      requestBody:
+        description: ""
+        required: true
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/NumberToDollar'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: general client error
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: system error
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          default: 200
+        message:
+          type: string
+        type:
+          type: string
+        data:
+          type: object
+    NumberToDollar:
+      type: object
+      properties:
+        dNum:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string   
